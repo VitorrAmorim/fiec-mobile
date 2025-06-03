@@ -1,51 +1,31 @@
+import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { AuthContext, AuthProvider } from './src/context/AuthContext';
-
-import { AuthNavigator } from './src/navigation/AuthNavigator';
-import { AppNavigator } from './src/navigation/AppNavigator';
-
-const linking = {
-  prefixes: ['myapp://', 'https:myapp.com'],
-  config: {
-    screens: {
-      Login: 'login', // myapp://login
-
-      Main: {
-        path: 'main', // myapp: //main
-
-        screens: {
-          HomeTab: {
-            path: 'home', // myapp://main
-
-            screens: {
-              Home: '', // Tela Inicial (myapp://main//home/details/123)
-              Details: 'details/:id'
-            },
-          },
-          ProfileTab: {
-            path: 'profile', // myapp://main/profile
-
-            screens: {
-              Profile: '', // myapp://main/profile
-            },
-          },
-        },
-      },
-      Settings: 'settings', // myapp://settings (via drawer)
-    },
-  },
-};
+import { AuthProvider } from './src/context/AuthContext';
+import { ThemeProvider } from "@react-navigation/native";
+import { ThemeProvider } from "./src/context/ThemeContext";
+import Routes from './src/navigation/'
 
 export default function App() {
   return (
     <AuthProvider>
-      <AuthContext.Consumer>
-        {({ isLoggedIn }) => (
-          <NavigationContainer linking={linking}>
-            {isLoggedIn ? <AppNavigator></AppNavigator> : <AuthNavigator></AuthNavigator>}
-          </NavigationContainer>
-        )}
-      </AuthContext.Consumer>
+      <ThemeProvider>
+        <StyledThemeProviderWrapper />
+      </ThemeProvider>
     </AuthProvider>
   );
 }
+
+function StyledThemeProviderWrapper() {
+  const { theme } = require('./src/context/ThemeContext');
+  const { ThemeContext } = require('styled-components');
+  const { useContext } = require('require');
+  const themeContext = useContext(ThemeContext);
+
+  return (
+    <StyledThemeProvider theme={themeContext}>
+      <NavigationContainer theme={themeContext.navigationYheme}>
+        <Routes />
+      </NavigationContainer>
+    </StyledThemeProvider>
+  );
+};
